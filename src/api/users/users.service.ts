@@ -5,7 +5,6 @@ import {
 } from '@Helper/fn/get-as-config.helper';
 import { WinstonLogger } from '@Helper/logger/logger.service';
 import { RolesEnum } from '@Roles/roles';
-import { ReturnUserWithoutPasswordDto } from '@Users/dto/return-user.dto';
 import { UpdateUserDto } from '@Users/dto/update-user.dto';
 import { UsersCacheService } from '@Users/users.caches.service';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
@@ -15,7 +14,6 @@ import {
   EntityTarget,
   FindOptionsSelect,
   InsertResult,
-  IsNull,
   QueryFailedError,
   Repository,
 } from 'typeorm';
@@ -122,7 +120,7 @@ export class UsersService extends CRUDService<UserEntity> {
     }
   }
 
-  async findOneWithGroup(uuid: string, user: UserEntity): Promise<UserEntity> {
+  async findOneWithGroup(uuid: string): Promise<UserEntity> {
     const find = await this.findOne([], { id: uuid });
 
     if (!find) {
@@ -130,23 +128,14 @@ export class UsersService extends CRUDService<UserEntity> {
         'User with id ' + uuid + ' does not exist',
         HttpStatus.NOT_FOUND,
       );
-    } else if (find.group !== user.group) {
-      throw new HttpException(
-        'Access denied: User belongs to a different group.',
-        HttpStatus.FORBIDDEN,
-      );
     }
     return find;
   }
 
-  async createAdmin(
-    createUserDto: CreateUserAdminDto,
-    user: UserEntity,
-  ): Promise<UserEntity> {
+  async createAdmin(createUserDto: CreateUserAdminDto): Promise<UserEntity> {
     const hashedPassword = this.helper.encodePassword(createUserDto.password);
     return this.create({
       ...createUserDto,
-      group: user.group,
       password: hashedPassword,
     });
   }
@@ -222,57 +211,15 @@ export class UsersService extends CRUDService<UserEntity> {
       await this.usersCacheService.set({ id: userId }, userExists);
     }
 
-    if (
-      userAuthorize.role === userExists.role &&
-      (userAuthorize.role === 'Admin' || userAuthorize.role === 'Technician') &&
-      userAuthorize.group === userExists.group &&
-      userAuthorize.id !== userExists.id
-    ) {
-      throw new HttpException(
-        'Access denied: Admins and Technicians cannot access details of other users with the same role in the same group.',
-        HttpStatus.FORBIDDEN,
-      );
+    if (userAuthorize.role === 'Admin') {
+      return userExists;
     } else if (userId === userAuthorize.id) {
       return userExists;
-    } else if (
-      userAuthorize.role === 'Technician' &&
-      userExists.role === 'Admin'
-    ) {
-      throw new HttpException(
-        'Access denied: Technicians cannot access Admin details.',
-        HttpStatus.FORBIDDEN,
-      );
-    } else if (
-      (userAuthorize.role === 'Admin' || userAuthorize.role === 'Technician') &&
-      userAuthorize.group === userExists.group
-    ) {
-      return userExists;
-    } else if (userAuthorize.group !== userExists.group) {
-      throw new HttpException(
-        'Access denied: User belongs to a different group.',
-        HttpStatus.FORBIDDEN,
-      );
     } else {
       throw new HttpException(
         'Access denied: Unauthorized access attempt.',
         HttpStatus.FORBIDDEN,
       );
     }
-  }
-
-  async findAllFromSameGroup(
-    userEntity: UserEntity,
-  ): Promise<ReturnUserWithoutPasswordDto[]> {
-    let whereCondition;
-
-    if (userEntity.group) {
-      whereCondition = { group: userEntity.group };
-    } else {
-      whereCondition = { group: IsNull() };
-    }
-
-    const users = await this.findAll([], whereCondition);
-
-    return users;
   }
 }

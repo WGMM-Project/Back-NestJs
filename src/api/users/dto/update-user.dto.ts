@@ -7,7 +7,6 @@ export class UpdateUserDto extends PartialType(
     'password',
     'email',
     'role',
-    'group',
     ...OMITTED_FIELDS,
   ] as const),
 ) {}

@@ -1,14 +1,7 @@
 import { RolesEnum } from '@Helper/roles/roles';
 import { Trim } from 'class-sanitizer';
 import { Exclude, Expose } from 'class-transformer';
-import {
-  IsEmail,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, Length } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -39,11 +32,6 @@ export class UserEntity extends BaseEntity {
   @IsString()
   @Length(8, 30)
   password: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  @IsString()
-  @IsOptional()
-  group: string | null;
 
   @Column({ type: 'varchar', unique: true })
   @IsNotEmpty()

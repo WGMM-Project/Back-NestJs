@@ -11,7 +11,6 @@ export interface RegisterUserTestDTO {
   password: string;
   email: string;
   role: RolesEnum;
-  group?: string;
 }
 
 export interface UserTestDTO {
@@ -23,7 +22,6 @@ export interface UserTestDTO {
   deleteAfterTest: boolean;
   role: RolesEnum;
   token?: string;
-  group?: string;
 }
 
 export interface LoginUserTestDTO {
@@ -58,7 +56,6 @@ export class UserTestManager {
 
   async randomRegister(
     role: RolesEnum = RolesEnum.User,
-    group?: string,
     deleteAfterTest: boolean = true,
     key?: string,
   ): Promise<UserTestDTO> {
@@ -67,7 +64,6 @@ export class UserTestManager {
       password: randomString(10),
       email: randomEmail(),
       role: role,
-      group: group,
     };
 
     return this.registerUser(randomUserData, deleteAfterTest, key);

@@ -24,15 +24,6 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('group')
-  @Auth(RolesEnum.Admin, RolesEnum.Technician)
-  @AddSummary('Retrieves users from the same group as the requesting user.')
-  findAllBySameGroupRoute(
-    @User() user: UserEntity,
-  ): Promise<ReturnUserWithoutPasswordDto[]> {
-    return this.usersService.findAllFromSameGroup(user);
-  }
-
   @Get('me')
   @Auth()
   @AddSummary(
@@ -64,10 +55,8 @@ export class UsersController {
   @Get()
   @Auth(RolesEnum.Admin)
   @AddSummary('Retrieves a list of all users purposes.')
-  findAllRoute(
-    @User() user: UserEntity,
-  ): Promise<ReturnUserWithoutPasswordDto[]> {
-    return this.usersService.findAllFromSameGroup(user);
+  findAllRoute(): Promise<ReturnUserWithoutPasswordDto[]> {
+    return this.usersService.findAll();
   }
 
   @Get(':uuid')
@@ -75,19 +64,17 @@ export class UsersController {
   @AddSummary('Finds a specific user by their unique identifier (UUID).')
   findOneRoute(
     @Param('uuid') uuid: string,
-    @User() user: UserEntity,
   ): Promise<ReturnUserWithoutPasswordDto> {
-    return this.usersService.findOneWithGroup(uuid, user);
+    return this.usersService.findOne([], { id: uuid });
   }
 
   @Post()
   @Auth(RolesEnum.Admin)
   @AddSummary('Creates a new user with administrative privileges.')
   createUserAdminRoute(
-    @User() user: UserEntity,
     @Body() body: CreateUserAdminDto,
   ): Promise<ReturnUserWithoutPasswordDto> {
-    return this.usersService.createAdmin(body, user);
+    return this.usersService.createAdmin(body);
   }
 
   @Put(':uuid')

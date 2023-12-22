@@ -29,13 +29,6 @@
 
       "@Users/*": ["src/api/users/*"],
       "@Files/*": ["src/api/files/*"],
-      "@Plots/*": ["src/api/plots/*"],
-      "@Fumure/*": ["src/api/fumure/*"],
-      "@Worker/*":["src/api/worker/*"],
-      "@SexualTrapping/*":["src/api/sexual-trapping/*"],
-      "@VisualControl/*":["src/api/visual-control/*"],
-      "@Commitments/*": ["src/api/crop-notebook/commitments/*"],
-      "@CropNotebook/*": ["src/api/crop-notebook/*"],
 
       "@Tests/*": ["test/*"],
 
