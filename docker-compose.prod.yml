@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Configuration pour pgAdmin en production
+  pgadmin:
+    container_name: prunidor_back_pgadmin_prod
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_SETUP_SERVER: 'True'
+      PGADMIN_SERVER_JSON_FILE: '/pgadmin4/servers.json'
+    ports:
+      - '5050:80'
+    volumes:
+      - pgadmin_data_prod:/root/.pgadmin
+      - ./servers.json:/pgadmin4/servers.json:ro
+
+  # Configuration pour Redis en production
+  redis:
+    container_name: prunidor_back_redis_prod
+    image: redis:latest
+    restart: always
+    command:
+      [
+        'redis-server',
+        '--maxmemory',
+        '${REDIS_MAXMEMORY}',
+        '--maxmemory-policy',
+        '${REDIS_MAXMEMORY_POLICY}',
+      ]
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis_data_prod:/data
+
+# Définition des volumes
+volumes:
+  pgadmin_data_prod:
+    name: prunidor-back-nestjs_pgadmin_data_prod
+    driver: local
+  redis_data_prod:
+    name: prunidor-back-nestjs_redis_data_prod
+    driver: local

@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2022",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@Roles/*": ["src/common/roles/*"],
+      "@Helper/*": ["src/common/*"],
+      "@Config/*": ["src/config/*"],
+      "@FileUploadHelpers/*": ["src/common/files/upload/*"],
+      "@FileDownloadHelpers/*": ["src/common/files/download/*"],
+      "@FileHelpers/*": ["src/common/files/*"],
+
+      "@Users/*": ["src/api/users/*"],
+      "@Files/*": ["src/api/files/*"],
+      "@Plots/*": ["src/api/plots/*"],
+      "@Fumure/*": ["src/api/fumure/*"],
+      "@Worker/*":["src/api/worker/*"],
+      "@SexualTrapping/*":["src/api/sexual-trapping/*"],
+      "@VisualControl/*":["src/api/visual-control/*"],
+      "@Commitments/*": ["src/api/crop-notebook/commitments/*"],
+      "@CropNotebook/*": ["src/api/crop-notebook/*"],
+
+      "@Tests/*": ["test/*"],
+
+      "@Api/*": ["src/api/*"],
+
+      "@/*": ["src/*"],
+    }
+  }
+}

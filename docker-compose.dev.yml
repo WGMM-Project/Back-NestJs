@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: prunidor_back_db_dev
+    image: postgres:16.0
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-defaultuser}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-defaultpassword}
+      POSTGRES_DB: ${DATABASE_NAME:-defaultdb}
+    ports:
+      - '${DATABASE_PORT}:5432'
+    volumes:
+      - db_data_dev:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: prunidor_back_pgadmin_dev
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_SETUP_SERVER: 'True'
+      PGADMIN_SERVER_JSON_FILE: '/pgadmin4/servers.json'
+    ports:
+      - '5050:80'
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data_dev:/root/.pgadmin
+      - ./servers.json:/pgadmin4/servers.json:ro
+
+  redis:
+    container_name: prunidor_back_redis_dev
+    image: redis:latest
+    restart: always
+    command:
+      [
+        'redis-server',
+        '--maxmemory',
+        '${REDIS_MAXMEMORY}',
+        '--maxmemory-policy',
+        '${REDIS_MAXMEMORY_POLICY}',
+      ]
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis_data_dev:/data
+
+volumes:
+  db_data_dev:
+    name: prunidor-back-nestjs_db_data_dev
+    driver: local
+  pgadmin_data_dev:
+    name: prunidor-back-nestjs_pgadmin_data_dev
+    driver: local
+  redis_data_dev:
+    name: prunidor-back-nestjs_redis_data_dev
+    driver: local
